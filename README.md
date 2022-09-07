@@ -1,2 +1,7 @@
 # cdk-cookbook.alanwsmith.com
-For AWS CDK Recipes 
+
+This is where I'm keeping examples
+of AWS CDK stuff for reference
+
+
+
