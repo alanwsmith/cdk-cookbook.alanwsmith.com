@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk')
 exports.handler = async function (event, context) {
+  console.log(`DEFAULT HANDLER`)
   let connectionInfo
   let connectionId = event.requestContext.connectionId
   const callbackAPI = new AWS.ApiGatewayManagementApi({
