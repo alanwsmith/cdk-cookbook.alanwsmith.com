@@ -18,7 +18,7 @@ exports.handler = async (event) => {
             )
             socket.addEventListener('open', (event) => {
               console.log('Websocket open')
-            }
+            })
             socket.addEventListener('message', (event) => {
               const message_text = JSON.parse(event.data).message
               const username = JSON.parse(event.data).username
