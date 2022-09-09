@@ -1,0 +1,39 @@
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+header {
+  padding-top: 18px;
+  padding-bottom: 4px;
+  width: 100%;
+  max-width: 64ch;
+  margin: 0 auto;
+  border-bottom: 1px solid #888;
+}
+main {
+  width: 100%;
+  max-width: 64ch;
+  margin: 0 auto;
+}
+footer {
+  width: 100%;
+  max-width: 64ch;
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 60px;
+  padding-bottom: 12px;
+  font-size: 0.9rem;
+}
+a {
+  text-decoration: none;
+}
+.pallet1 {
+  background-color: #668ba4;
+  color: #feffdf;
+}
+.pallet1 a {
+  color: #97cba9;
+}

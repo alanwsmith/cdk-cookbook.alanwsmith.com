@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>CDK Cookbook - alan w. smith</title>
+    <meta property="og:title" content="CDK Cookbook - alan w. smith" />
+    <meta name="twitter:title" content="CDK Cookbook - alan w. smith" />
+    <meta property="og:url" content="https://cdk-cookbook.alanwsmith.com/" />
+
+    <meta
+      name="description"
+      content="My collection of AWS Cloud Development Kit (CDK) recipies for all the stuff I run into during development."
+    />
+    <meta
+      property="og:description"
+      content="My collection of AWS Cloud Development Kit (CDK) recipies for all the stuff I run into during development."
+    />
+
+    <meta
+      property="og:image"
+      content="https://cdk-cookbook.alanwsmith.com/og-images/main.png"
+    />
+    <meta
+      name="twitter:image"
+      content="https://cdk-cookbook.alanwsmith.com/og-images/main.png"
+    />
+
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@theidofalan" />
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/favicons/16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/favicons/32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="/favicons/96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="128x128"
+      href="/favicons/128x128.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="196x196"
+      href="/favicons/196x196.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="228x228"
+      href="/favicons/228x228.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="152x152"
+      href="/favicons/152x152.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="167x167"
+      href="/favicons/167x167.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="180x180"
+      href="/favicons/180x180.png"
+    />
+
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body class="pallet1">
+    <header>
+      <a href="/">Home</a> ~
+      <a href="https://www.alanwsmith.com/">alanwsmith.com</a> ~
+      <a href="https://links.alanwsmith.com">links</a> ~
+      <a href="https://podcast.alanwsmith.com/">podcast</a>
+    </header>
+    <main>
+      <h1>CDK Cookbook</h1>
+      <p>
+        I spent (no joke) two days trying to figure out how to turn on
+        <a
+          href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Server-Timing"
+          >Server-Timing headers</a
+        >
+        in the
+        <a href="https://aws.amazon.com/cdk/">AWS Cloud Development Kit</a>. I'm
+        posting the code here so others can avoid the struggle. I'll add
+        recipies for other solutions as I figure them out as well.
+      </p>
+      <p>Enjoy!</p>
+      <hr />
+      <p>
+        Note that some examples can't cleanly be deleted on the first go with
+        `cdk destroy` because of the way lambda functions get propigated. If it
+        doesn't work the first time (and throws a bunch of errors), wait 20min
+        and try again. If that doesn't work, you'll need to go into the
+        CloudFront console and delete the distribution manually. After 20min you
+        should be able to run `cdk destroy` then.
+      </p>
+      <h3>Notes</h3>
+      <ul>
+        <li>
+          Adding the optional `access_control_expose_headers=["*"]` to the
+          server timing example is require if you want to see the data on
+          another host (e.g. localhost)
+        </li>
+        <li>
+          The CORS stuff requires five named arguments:
+          `access_control_allow_credentials`, `access_control_allow_headers`,
+          `access_control_allow_methods`, `access_control_allow_origins`, and
+          `origin_override`
+        </li>
+      </ul>
+      <h3>TODO:</h3>
+      <ul>
+        <li>
+          Figure out what the values for `access_control_allow_headers` in the
+          CORS stuff should be
+        </li>
+      </ul>
+    </main>
+    <footer>
+      made by alan w. smith
+      <br />
+      who has <a href="https://twitter.com/TheIdOfAlan">twitter</a>, a
+      <a href="https://www.alanwsmith.com">website</a>, and a
+      <a href="https://podcast.alanwsmith.com/">podcast</a> <br />
+      among other <a href="https://links.alanwsmith.com">things</a>
+    </footer>
+  </body>
+</html>

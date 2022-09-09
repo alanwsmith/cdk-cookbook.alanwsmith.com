@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      CDK Example - Serve Wildcard URLs From A Single Source In Cloudfront
+    </title>
+    <style>
+      body {
+        background-color: #433633;
+        color: #f7f0f5;
+      }
+      a {
+        color: #decbb7;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      This example shows how to serve multiple URLs from a single origin
+      location.
+    </p>
+    <p>Click this link to see it in action:</p>
+    <p>
+      <script>
+        const arbitrary_link = `/collector/arbitrary-${new Date().getTime()}.html`
+        document.write(`<a href="${arbitrary_link}">${arbitrary_link}</a>`)
+      </script>
+    </p>
+  </body>
+</html>
