@@ -34,7 +34,7 @@ exports.handler = async (event) => {
             .addEventListener('click', (event) => {
               const message_text = document.getElementById('message').value
               const payload = JSON.stringify({
-                action: 'sendmessage',
+                action: 'send_message',
                 message: JSON.stringify({ message: message_text }),
               })
               socket.send(payload)

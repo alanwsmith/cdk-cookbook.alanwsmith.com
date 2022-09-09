@@ -5,12 +5,57 @@ from aws_cdk import aws_apigatewayv2_integrations_alpha as apiv2ai
 from aws_cdk import aws_lambda as lambda_
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_iam as iam
+from aws_cdk import Aws 
 from os import path
 
 class ApiGatewayWebsocketChatAppStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+
+        lambda_policy_statement = iam.PolicyStatement(
+            actions=[
+                "execute-api:ManageConnections"
+            ],
+            resources=[
+                f"arn:aws:execute-api:us-east-1:{Aws.ACCOUNT_ID}:*/*/POST/@connections/*"
+            ]
+        )
+
+        # manage_connections_policy = iam.Policy(
+        #     self, 
+        #     "cdkManageConnectionsPolicy",
+        #         statements=[
+        #             iam.PolicyStatement(
+        #                 actions=[
+        #                     "execute-api:ManageConnections"
+        #                 ],
+        #                 resources=[
+        #                     "arn:aws:execute-api:us-east-1:177366080641:*/*/POST/@connections/*"
+        #                 ]
+        #         )]
+        #     )
+
+        # lambda_role = iam.Role(
+        #     self, 
+        #     "cdkWebsocketChatAppExampleRole",
+        #     assumed_by=iam.ServicePrincipal(
+        #         "lambda.amazonaws.com"
+        #     ),
+        #     description="CDK Websocket chat example role"
+        # )
+
+        # lambda_role.add_to_policy(
+        #     iam.PolicyStatement(
+        #         actions=[
+        #             "execute-api:ManageConnections"
+        #         ],
+        #         resources=[
+        #             f"arn:aws:execute-api:us-east-1:{Aws.ACCOUNT_ID}:*/*/POST/@connections/*"
+        #         ]
+        #     )
+        # )
+
 
         global_table = dynamodb.Table(
             self, 
@@ -54,6 +99,9 @@ class ApiGatewayWebsocketChatAppStack(Stack):
             principal=iam.ServicePrincipal("apigateway.amazonaws.com")
         )
 
+        send_message_handler.add_to_role_policy(
+            lambda_policy_statement
+        )
 
         web_socket_api.add_route(
             "send_message",
@@ -81,6 +129,10 @@ class ApiGatewayWebsocketChatAppStack(Stack):
         connect_handler.add_permission(
             "CDK_CONNECT_HANDLER_PERMISSION_FOR_WEBSOCKET_EXAMPLE_APP",
             principal=iam.ServicePrincipal("apigateway.amazonaws.com")
+        )
+
+        connect_handler.add_to_role_policy(
+            lambda_policy_statement
         )
 
 
@@ -112,6 +164,10 @@ class ApiGatewayWebsocketChatAppStack(Stack):
             principal=iam.ServicePrincipal("apigateway.amazonaws.com")
         )
 
+        disconnect_handler.add_to_role_policy(
+            lambda_policy_statement
+        )
+
         web_socket_api.add_route(
             "$disconnect",
             integration=apiv2ai.WebSocketLambdaIntegration(
@@ -139,6 +195,11 @@ class ApiGatewayWebsocketChatAppStack(Stack):
             "CDK_DEFAULT_HANDLER_PERMISSION_FOR_WEBSOCKET_EXAMPLE_APP",
             principal=iam.ServicePrincipal("apigateway.amazonaws.com")
         )
+
+        default_handler.add_to_role_policy(
+            lambda_policy_statement
+        )
+
 
         web_socket_api.add_route(
             "$default",
