@@ -12,50 +12,65 @@ class ApiGatewayWebsocketChatAppStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        global_table = dynamodb.Table(
+            self, 
+            "CDK_TABLE_FOR_WEBSOCKET_EXAMPLE_APP",
+            partition_key=dynamodb.Attribute(
+                name="connectionId", 
+                type=dynamodb.AttributeType.STRING
+            ),
+        )
+
         web_socket_api = apiv2a.WebSocketApi(
             self, 
-            "CDK_EXAMPLE_CHAT_APP_WEBSOCKET_API"
+            "CDK_WEBSOCKET_API_FOR_WEBSOCKET_EXAMPLE_APP"
         )
 
-        apiv2a.WebSocketStage(
+        web_socket_stage = apiv2a.WebSocketStage(
             self, 
-            "CDK_EXAMPLE_CHAT_APP_WEBSOCKET_STAGE",
+            "CDK_STAGE_FOR_WEBSOCKET_EXAMPLE_APP",
             web_socket_api=web_socket_api,
             stage_name="dev",
-            auto_deploy=True
+            auto_deploy=True,
         )
 
-        message_handler = lambda_.Function(
+        send_message_handler = lambda_.Function(
             self, 
-            "CDK_EXAMPLE_CHAT_APP_MESSAGE_FUNCTION",
+            "CDK_MESSAGE_HANDLER_FOR_WEBSOCKET_EXAMPLE_APP",
             runtime=lambda_.Runtime.NODEJS_16_X,
             handler="index.handler",
+            environment={
+                "table":global_table.table_name
+            },
             code=lambda_.Code.from_asset(
                 path.join(
-                    'assets', 'lambda-functions', 'message_handler'
+                    'assets', 'lambda-functions', 'send_message_handler'
                 )
             )
         )
 
-        message_handler.add_permission(
-            "CDK_EXAMPLE_MESSAGE_HANDLER_PERMISSION",
+        send_message_handler.add_permission(
+            "CDK_MESSAGE_HANDLER_PERMISSIONS_FOR_WEBSOCKET_EXAMPLE_APP",
             principal=iam.ServicePrincipal("apigateway.amazonaws.com")
         )
 
 
         web_socket_api.add_route(
-            "message",
+            "send_message",
             integration=apiv2ai.WebSocketLambdaIntegration(
-                "CDK_EXAMPLE_CHAT_APP_MESSAGE_ROUTE",
-                message_handler
+                "CDK_MESSAGE_HANDLER_ROUTE_FOR_WEBSOCKET_EXAMPLE_APP",
+                send_message_handler
             )
         )
 
         connect_handler = lambda_.Function(
             self, 
-            "cdkApiGatewayWebsocketsCloudfrontS3ChatPrototypeConnectFunciton",
+            "CDK_CONNECT_HANDLER_FOR_WEBSOCKET_EXAMPLE_APP",
             runtime=lambda_.Runtime.NODEJS_16_X,
             handler="index.handler",
+            environment={
+                "table":global_table.table_name
+            },
             code=lambda_.Code.from_asset(
                 path.join(
                     'assets', 'lambda-functions', 'connect_handler'
@@ -64,7 +79,7 @@ class ApiGatewayWebsocketChatAppStack(Stack):
         )
 
         connect_handler.add_permission(
-            "CDK_EXAMPLE_CONNECT_HANDLER_PERMISSION",
+            "CDK_CONNECT_HANDLER_PERMISSION_FOR_WEBSOCKET_EXAMPLE_APP",
             principal=iam.ServicePrincipal("apigateway.amazonaws.com")
         )
 
@@ -72,16 +87,19 @@ class ApiGatewayWebsocketChatAppStack(Stack):
         web_socket_api.add_route(
             "$connect",
             integration=apiv2ai.WebSocketLambdaIntegration(
-                "cdkApiGatewayWebsocketsCloudfrontS3ChatPrototypeConnectIntegration",
+                "CDK_CONNECT_HANDLER_ROUTE_FOR_WEBSOCKET_EXAMPLE_APP",
                 connect_handler
             )
         )
 
         disconnect_handler = lambda_.Function(
             self, 
-            "cdkApiGatewayWebsocketsCloudfrontS3ChatPrototypeDisconnectFunciton",
+            "CDK_DISCONNECT_HANDLER_FOR_WEBSOCKET_EXAMPLE_APP",
             runtime=lambda_.Runtime.NODEJS_16_X,
             handler="index.handler",
+            environment={
+                "table":global_table.table_name
+            },
             code=lambda_.Code.from_asset(
                 path.join(
                     'assets', 'lambda-functions', 'disconnect_handler'
@@ -90,23 +108,26 @@ class ApiGatewayWebsocketChatAppStack(Stack):
         )
 
         disconnect_handler.add_permission(
-            "CDK_EXAMPLE_DISCONNECT_HANDLER_PERMISSION",
+            "CDK_DISCONNECT_HANDLER_PERMISSION_FOR_WEBSOCKET_EXAMPLE_APP",
             principal=iam.ServicePrincipal("apigateway.amazonaws.com")
         )
 
         web_socket_api.add_route(
             "$disconnect",
             integration=apiv2ai.WebSocketLambdaIntegration(
-                "cdkApiGatewayWebsocketsCloudfrontS3ChatPrototypeDisconnectIntegration",
+                "CDK_DISCONNECT_HANDLER_ROUTE_FOR_WEBSOCKET_EXAMPLE_APP",
                 disconnect_handler
             )
         )
 
         default_handler = lambda_.Function(
             self, 
-            "cdkApiGatewayWebsocketsCloudfrontS3ChatPrototypeDefaultFunciton",
+            "CDK_DEFAULT_HANDLER_FOR_WEBSOCKET_EXAMPLE_APP",
             runtime=lambda_.Runtime.NODEJS_16_X,
             handler="index.handler",
+            environment={
+                "table":global_table.table_name
+            },
             code=lambda_.Code.from_asset(
                 path.join(
                     'assets', 'lambda-functions', 'default_handler'
@@ -115,42 +136,38 @@ class ApiGatewayWebsocketChatAppStack(Stack):
         )
 
         default_handler.add_permission(
-            "CDK_EXAMPLE_DISCONNECT_HANDLER_PERMISSION",
+            "CDK_DEFAULT_HANDLER_PERMISSION_FOR_WEBSOCKET_EXAMPLE_APP",
             principal=iam.ServicePrincipal("apigateway.amazonaws.com")
         )
 
         web_socket_api.add_route(
             "$default",
             integration=apiv2ai.WebSocketLambdaIntegration(
-                "cdkApiGatewayWebsocketsCloudfrontS3ChatPrototypeDefaultIntegration",
+                "CDK_DEFAULT_HANDLER_ROUTE_FOR_WEBSOCKET_EXAMPLE_APP",
                 default_handler
             )
         )
 
-        global_table = dynamodb.Table(
-            self, 
-            "cdkApiGatewayWebsocketsChatPrototypeTable",
-            partition_key=dynamodb.Attribute(
-                name="connectionId", 
-                type=dynamodb.AttributeType.STRING
-            ),
-        )
-
         global_table.grant_read_write_data(connect_handler)
         global_table.grant_read_write_data(default_handler)
-        global_table.grant_read_write_data(message_handler)
+        global_table.grant_read_write_data(send_message_handler)
         global_table.grant_read_write_data(disconnect_handler)
 
         http_api = apiv2a.HttpApi(
             self, 
-            "cdkApiGatewayWebsocketsCloudfrontS3ChatPrototypeHTTPAPI"
+            "CDK_HTTP_API_FOR_WEBSOCKET_EXAMPLE_APP"
         )
 
         web_page = lambda_.Function(
             self, 
-            "cdkApiGatewayWebsocketsCloudfrontS3ChatPrototypeWebPage",
+            "CDK_WEB_PAGE_FOR_WEBSOCKET_EXAMPLE_APP",
             runtime=lambda_.Runtime.NODEJS_16_X,
             handler="index.handler",
+            environment={
+                #"websocket_api_endpoint":web_socket_api.api_endpoint
+                # "websocket_stage_name": web_socket_api.
+                "websocket_endpoint": web_socket_stage.url
+            },
             code=lambda_.Code.from_asset(
                 path.join(
                     'assets', 'lambda-functions', 'web_page'
@@ -162,7 +179,7 @@ class ApiGatewayWebsocketChatAppStack(Stack):
             path="/",
             methods=[apiv2a.HttpMethod.GET],
             integration=apiv2ai.HttpLambdaIntegration(
-                "cdkApiGatewayWebsocketsCloudfrontS3ChatPrototypeWebPageIntegration",
+                "CDK_WEB_PAGE_ROUTE_FOR_WEBSOCKET_EXAMPLE_APP",
                 web_page
             )
         )
