@@ -2,6 +2,7 @@ const AWS = require('aws-sdk')
 const ddb = new AWS.DynamoDB.DocumentClient()
 
 exports.handler = async function (event, context) {
+  console.log(`MESSAGE HANDLER`)
   let connections
   try {
     connections = await ddb.scan({ TableName: process.env.table }).promise()
