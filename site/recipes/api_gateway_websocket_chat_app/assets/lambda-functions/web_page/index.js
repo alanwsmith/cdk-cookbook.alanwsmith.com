@@ -1,4 +1,5 @@
 exports.handler = async (event) => {
+  console.log(`WEB PAGE`)
   const response = {
     isBase64Encoded: false,
     statusCode: 200,
@@ -14,7 +15,7 @@ exports.handler = async (event) => {
       <script>
         addEventListener('DOMContentLoaded', (event) => {
           const socket = new WebSocket(
-            'wss://acuu3huat3.execute-api.us-east-1.amazonaws.com/production'
+            '${process.env.websocket_endpoint}'
           )
           socket.addEventListener('message', (event) => {
             // console.log(event)
