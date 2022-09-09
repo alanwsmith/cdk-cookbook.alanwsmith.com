@@ -26,6 +26,22 @@ class ServerTimingHeadersStack(Stack):
             "cdkServerTimingHeaderPolicy",
             response_headers_policy_name="cdkServerTimingHeaderPolicy",
             comment="CDK Example of enabling ServerTiming Headers",
+            cors_behavior=cloudfront.ResponseHeadersCorsBehavior(
+                access_control_allow_credentials=False,
+                access_control_allow_methods=["GET", "POST"],
+                access_control_allow_origins=["*"],
+                access_control_allow_headers=[
+                    "server-timing", 
+                    "x-your-custom-header-1", 
+                    "x-your-custom-headers-2"
+                ],
+                access_control_expose_headers=[
+                    "server-timing", 
+                    "x-your-custom-headers-1", 
+                    "x-your-custom-headers-2"
+                ],
+                origin_override=True
+            ),
         )
 
         custom_response_headers_policy.node.default_child.add_override('Properties.ResponseHeadersPolicyConfig.ServerTimingHeadersConfig.Enabled', True)

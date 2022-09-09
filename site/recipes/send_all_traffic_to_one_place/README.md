@@ -1,3 +1,9 @@
+
+TODO: Rename this to something like:
+
+Server one file for multiple url pahts
+
+
 This one redirects all traffic (including images and favicons) 
 to a single `target.html` file at the root of the
 S3 bucket. 

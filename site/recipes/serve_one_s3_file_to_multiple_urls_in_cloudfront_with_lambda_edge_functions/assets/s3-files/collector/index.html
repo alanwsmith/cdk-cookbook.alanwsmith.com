@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      CDK Example - Serve Wildcard URLs From A Single Source In Cloudfront
+    </title>
+    <style>
+      body {
+        background-color: #433633;
+        color: #f7f0f5;
+      }
+      a {
+        color: #decbb7;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      This file is located at `/collector/index.html` in an S3 bucket. With the
+      setup in this example, it is served for every url that starts with
+      `/collector` regardless of the rest of the path.
+    </p>
+    <p>
+      This link changes with each page load or reqeust. The change is client
+      side via javascript since the source always comes from the same origin
+      file.
+    </p>
+    <p>
+      <script>
+        const arbitrary_link = `/collector/arbitrary-${new Date().getTime()}.html`
+        document.write(`<a href="${arbitrary_link}">${arbitrary_link}</a>`)
+      </script>
+    </p>
+  </body>
+</html>
