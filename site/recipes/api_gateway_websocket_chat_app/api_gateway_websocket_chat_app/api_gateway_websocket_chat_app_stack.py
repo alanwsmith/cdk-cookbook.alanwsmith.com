@@ -4,6 +4,7 @@ from aws_cdk import aws_apigatewayv2_alpha as apiv2a
 from aws_cdk import aws_apigatewayv2_integrations_alpha as apiv2ai
 from aws_cdk import aws_lambda as lambda_
 from aws_cdk import aws_dynamodb as dynamodb
+from aws_cdk import aws_iam as iam
 from os import path
 
 class ApiGatewayWebsocketChatAppStack(Stack):
@@ -36,6 +37,12 @@ class ApiGatewayWebsocketChatAppStack(Stack):
             )
         )
 
+        message_handler.add_permission(
+            "CDK_EXAMPLE_MESSAGE_HANDLER_PERMISSION",
+            principal=iam.ServicePrincipal("apigateway.amazonaws.com")
+        )
+
+
         web_socket_api.add_route(
             "message",
             integration=apiv2ai.WebSocketLambdaIntegration(
@@ -55,6 +62,12 @@ class ApiGatewayWebsocketChatAppStack(Stack):
                 )
             )
         )
+
+        connect_handler.add_permission(
+            "CDK_EXAMPLE_CONNECT_HANDLER_PERMISSION",
+            principal=iam.ServicePrincipal("apigateway.amazonaws.com")
+        )
+
 
         web_socket_api.add_route(
             "$connect",
@@ -76,6 +89,11 @@ class ApiGatewayWebsocketChatAppStack(Stack):
             )
         )
 
+        disconnect_handler.add_permission(
+            "CDK_EXAMPLE_DISCONNECT_HANDLER_PERMISSION",
+            principal=iam.ServicePrincipal("apigateway.amazonaws.com")
+        )
+
         web_socket_api.add_route(
             "$disconnect",
             integration=apiv2ai.WebSocketLambdaIntegration(
@@ -94,6 +112,11 @@ class ApiGatewayWebsocketChatAppStack(Stack):
                     'assets', 'lambda-functions', 'default_handler'
                 )
             )
+        )
+
+        default_handler.add_permission(
+            "CDK_EXAMPLE_DISCONNECT_HANDLER_PERMISSION",
+            principal=iam.ServicePrincipal("apigateway.amazonaws.com")
         )
 
         web_socket_api.add_route(
